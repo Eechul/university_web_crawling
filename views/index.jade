@@ -1,0 +1,29 @@
+doctype html
+html
+  head
+    title 치지말고 그냥 봐
+    meta(name='viewport', content='width-device-width, initial-scale=1.0')
+    link(rel='stylesheet', href='/bootstrap/css/bootstrap.css')
+  body
+    h2  Welcome, 치지말고 그냥 봐
+    .table-responsive
+      table.table
+        thead
+          tr
+            th 번호
+            th 제목
+            th 등록일
+        tbody
+        if posts
+          each post in posts
+            tr
+              td=post.number
+              td 
+                a(href="http://www.hs.ac.kr/kor/community/"+post.link 
+                target="_blank")=post.title
+              td 2016/07/05
+        else 
+          tr
+            td 
+            td 데이터 없음
+            
