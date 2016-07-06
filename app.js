@@ -4,7 +4,6 @@ var cheerio = require('cheerio');
 var request = require('request');
 var app = express();
 
-/////////////////
 var haksaUrl = "http://www.hs.ac.kr/kor/community/haksa_list.php"
 app.set('views', './views');
 app.set('view engine', 'jade');
