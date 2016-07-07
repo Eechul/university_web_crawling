@@ -43,6 +43,11 @@ request(haksaUrl, function (err, res, html) {
     }
 });
 
+app.get('/data', function(req, res) {
+
+  res.render("success");
+})
+
 app.get('/', function(req, res) {
   res.render('index');
 })
