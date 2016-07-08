@@ -1,11 +1,15 @@
 doctype html
 html
   head
-    title 치지말고 그냥 봐
+    title 검색말고 그냥 봐 한신대 ver.
     meta(name='viewport', content='width-device-width, initial-scale=1.0')
     link(rel='stylesheet', href='/bootstrap/css/bootstrap.css')
   body
-    h2  Welcome, 치지말고 그냥 봐
+    h2 검색말고 그냥 봐, 한신대 ver
+    a.btn.btn-primary(href='/notice/hacksa') 학사공지
+    a.btn.btn-success(href='/notice/scholarship') 장학/사회봉사
+    a.btn.btn-info(href='#') 취업공지
+    //a.btn.btn-danger.active(href='#') a - active
     .table-responsive
       table.table
         thead
@@ -26,4 +30,8 @@ html
           tr
             td 
             td 데이터 없음
-            
+        tfoot
+          tr
+            td
+            td
+            td
