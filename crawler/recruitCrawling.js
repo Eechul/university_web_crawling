@@ -7,7 +7,7 @@ module.exports = function() {
   var recruitUrl = "http://www.hs.ac.kr/kor/community/recruit_list.php" // 3
 
   var hacksaPosts = [];
-  request(haksaUrl,
+  request(recruitUrl,
     function (err, res, html) {
       if (!err) {
           var $ = cheerio.load(html);
@@ -39,7 +39,7 @@ module.exports = function() {
           })
         }
         hacksaPosts.splice(0,1);
-        var sql = "DELETE FROM board_hacksa"
+        var sql = "DELETE FROM board_recruit"
         conn.query(sql, function(err, results) {
           if(err) {
             console.log(err);
@@ -48,7 +48,7 @@ module.exports = function() {
             console.log('delete success');
           }
         })
-        var sql = "INSERT INTO board_hacksa(number, title, style, link, registration_date) VALUES ?"
+        var sql = "INSERT INTO board_recruit(number, title, style, link, registration_date) VALUES ?"
         conn.query(sql, [hacksaPosts], function(err, results) {
           if(err) {
             console.log(err);
