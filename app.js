@@ -86,6 +86,7 @@ cron.scheduleJob(rule1, function(){
 var rule2 = new cron.RecurrenceRule();
 rule2.second = 35;
 cron.scheduleJob(rule2, function(){
+  var url = 'http://www.hs.ac.kr/kor/community/'
   request(urlArr[1], function (err, res, html) {
     hacksaPosts.splice(0,hacksaPosts.length);
     if (!err) {
@@ -127,6 +128,31 @@ cron.scheduleJob(rule2, function(){
               console.log(err);
             } else {
               console.log(new Date(), "scholarship Update!!");
+              var mailOptions={
+                    from : "LeeDongChel <choise154@gmail.com>",
+                    to : "choise154@naver.com",
+                    subject : "메일링 성공",
+                    text : "Your Text",
+                    html : `<h2>
+                      <a href="${url+hacksaPosts[0][3]}">
+                        새로운 장학공지가 업로드 되었습니다!</a>
+                      </h2>`
+                    // attachments : [
+                    //     {   // file on disk as an attachment
+                    //         filename: 'text3.txt',
+                    //         path: 'Your File path' // stream this file
+                    //     }
+                    // ]
+                }
+                console.log(mailOptions);
+                smtpTransport.sendMail(mailOptions, function(error, response){
+                    if(error){
+                        console.log(error);
+                    }else{
+                        console.log(response.response.toString());
+                        console.log("Message sent: " + response.message);
+                    }
+                });
             }
           })
         }
@@ -139,7 +165,7 @@ app.get('/notice/hacksa', function(req, res) {
   conn.query(sql, function(err, results) {
     if(err){
       console.log(err);
-      res.status(500).send('server error!');
+      //res.status(500).send('server error!');
     } else {
       //console.log(results);
       res.render('index', {posts:results})
@@ -152,7 +178,7 @@ app.get('/notice/scholarship', function(req, res) {
   conn.query(sql, function(err, results) {
     if(err){
       console.log(err);
-      res.status(500).send('server error!');
+      //res.status(500).send('server error!');
     } else {
       //console.log(results);
       res.render('index', {posts:results})
@@ -165,7 +191,7 @@ app.get('/notice/recruit', function(req, res) {
   conn.query(sql, function(err, results) {
     if(err){
       console.log(err);
-      res.status(500).send('server error!');
+      //res.status(500).send('server error!');
     } else {
       //console.log(results);
       res.render('index', {posts:results})
@@ -201,11 +227,9 @@ app.get('/test', function(req, res) {
     smtpTransport.sendMail(mailOptions, function(error, response){
         if(error){
             console.log(error);
-            res.end("error");
         }else{
             console.log(response.response.toString());
             console.log("Message sent: " + response.message);
-            res.end("sent");
         }
     });
 })
