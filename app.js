@@ -11,7 +11,7 @@ var conn = require('./config/db')();
 var app = express();
 
 var haksaUrl = "http://www.hs.ac.kr/kor/community/haksa_list.php" // 1
-var scholarshipUrl = "http://www.hs.ac.kr/kor/community/scholarship_list.php" //3
+var scholarshipUrl = "http://www.hs.ac.kr/kor/community/scholarship_list.php" //2
 var recruitUrl = "http://www.hs.ac.kr/kor/community/recruit_list.php" // 3
 var urlArr = [
   haksaUrl,
@@ -25,16 +25,28 @@ var scholarshipPosts = require('./crawler/scholarshipCrawling')();
 
 var scholarshipCrawlingStatus;
 
+var smtpTransport = nodemailer.createTransport(smtpTransport({
+    host : "smtp.gmail.com",
+    secureConnection : true,
+    port: 465,
+    auth : {
+        user : "choise154@gmail.com",
+        pass : "dowklee741"
+    }
+}));
+
 app.set('views', './views');
 app.set('view engine', 'jade');
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: false }))
 
+var viewUrl = 'http://www.hs.ac.kr/kor/community/';
+
 var seq = 0;
 var rule1 = new cron.RecurrenceRule();
 rule1.second = 30;
 cron.scheduleJob(rule1, function(){
-    console.log(new Date(), '매 분 30초에 콜백');
+    console.log(new Date(), '30초');
     hacksaPosts.splice(0,hacksaPosts.length);
     request(urlArr[0], function (err, res, html) {
       if (!err) {
@@ -76,6 +88,25 @@ cron.scheduleJob(rule1, function(){
                 console.log(err);
               } else {
                 console.log(new Date(), "hacksaPost Update!!");
+                var mailOptions={
+                      from : "LeeDongChel <choise154@gmail.com>",
+                      to : "choise154@gmail.com",
+                      subject : "[치.그.봐] 학사 게시판이 업데이트 되었습니다.",
+                      text : "Your Text",
+                      html : `<h2>
+                        <a href="${viewUrl+hacksaPosts[0][3]}">
+                          ${hacksaPosts[0][1]}</a>
+                        </h2>`
+                  }
+                  console.log(mailOptions);
+                  smtpTransport.sendMail(mailOptions, function(error, response){
+                      if(error){
+                          console.log(error);
+                      }else{
+                          console.log(response.response.toString());
+                          console.log("Message sent: " + response.message);
+                      }
+                });
               }
             })
           }
@@ -86,7 +117,7 @@ cron.scheduleJob(rule1, function(){
 var rule2 = new cron.RecurrenceRule();
 rule2.second = 35;
 cron.scheduleJob(rule2, function(){
-  var url = 'http://www.hs.ac.kr/kor/community/'
+  console.log(new Date(), '30초');
   request(urlArr[1], function (err, res, html) {
     hacksaPosts.splice(0,hacksaPosts.length);
     if (!err) {
@@ -130,19 +161,13 @@ cron.scheduleJob(rule2, function(){
               console.log(new Date(), "scholarship Update!!");
               var mailOptions={
                     from : "LeeDongChel <choise154@gmail.com>",
-                    to : "choise154@naver.com",
-                    subject : "메일링 성공",
+                    to : "choise154@gmail.com",
+                    subject : "[치.그.봐] 장학/사회 게시판이 업데이트 되었습니다.",
                     text : "Your Text",
                     html : `<h2>
-                      <a href="${url+hacksaPosts[0][3]}">
-                        새로운 장학공지가 업로드 되었습니다!</a>
+                      <a href="${viewUrl+hacksaPosts[0][3]}">
+                        ${hacksaPosts[0][1]}</a>
                       </h2>`
-                    // attachments : [
-                    //     {   // file on disk as an attachment
-                    //         filename: 'text3.txt',
-                    //         path: 'Your File path' // stream this file
-                    //     }
-                    // ]
                 }
                 console.log(mailOptions);
                 smtpTransport.sendMail(mailOptions, function(error, response){
@@ -152,7 +177,7 @@ cron.scheduleJob(rule2, function(){
                         console.log(response.response.toString());
                         console.log("Message sent: " + response.message);
                     }
-                });
+              });
             }
           })
         }
@@ -165,9 +190,7 @@ app.get('/notice/hacksa', function(req, res) {
   conn.query(sql, function(err, results) {
     if(err){
       console.log(err);
-      //res.status(500).send('server error!');
     } else {
-      //console.log(results);
       res.render('index', {posts:results})
     }
   })
@@ -178,9 +201,7 @@ app.get('/notice/scholarship', function(req, res) {
   conn.query(sql, function(err, results) {
     if(err){
       console.log(err);
-      //res.status(500).send('server error!');
     } else {
-      //console.log(results);
       res.render('index', {posts:results})
     }
   })
@@ -191,48 +212,11 @@ app.get('/notice/recruit', function(req, res) {
   conn.query(sql, function(err, results) {
     if(err){
       console.log(err);
-      //res.status(500).send('server error!');
     } else {
-      //console.log(results);
       res.render('index', {posts:results})
     }
   })
 });
-
-var smtpTransport = nodemailer.createTransport(smtpTransport({
-    host : "smtp.gmail.com",
-    secureConnection : true,
-    port: 465,
-    auth : {
-        user : "choise154@gmail.com",
-        pass : "dowklee741"
-    }
-}));
-
-app.get('/test', function(req, res) {
-  var mailOptions={
-        from : "LeeDongChel <choise154@gmail.com>",
-        to : "choise154@naver.com",
-        subject : "메일링 성공",
-        text : "Your Text",
-        html : "<h2>성공</h2>"
-        // attachments : [
-        //     {   // file on disk as an attachment
-        //         filename: 'text3.txt',
-        //         path: 'Your File path' // stream this file
-        //     }
-        // ]
-    }
-    console.log(mailOptions);
-    smtpTransport.sendMail(mailOptions, function(error, response){
-        if(error){
-            console.log(error);
-        }else{
-            console.log(response.response.toString());
-            console.log("Message sent: " + response.message);
-        }
-    });
-})
 
 app.listen(4003, function() {
   console.log('Connected 4003 port!!!');
