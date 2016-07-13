@@ -2,221 +2,51 @@ var express = require('express');
 var bodyParser = require('body-parser')
 var cheerio = require('cheerio');
 var request = require('request');
-
-var nodemailer = require('nodemailer');
-var smtpTransport = require("nodemailer-smtp-transport")
-
 var cron = require('node-schedule');
 var conn = require('./config/db')();
+var smtpTransport = require('./module/email/smtpMethod')();
 var app = express();
 
 var haksaUrl = "http://www.hs.ac.kr/kor/community/haksa_list.php" // 1
 var scholarshipUrl = "http://www.hs.ac.kr/kor/community/scholarship_list.php" //2
 var recruitUrl = "http://www.hs.ac.kr/kor/community/recruit_list.php" // 3
-var urlArr = [
-  haksaUrl,
-  scholarshipUrl
-  // recruitUrl
-];
-
 var hacksaPosts = require('./crawler/haksaCrawling')();
 var scholarshipPosts = require('./crawler/scholarshipCrawling')();
-// var recruitPosts = require('./crawler/recruitCrawling')();
-
-var scholarshipCrawlingStatus;
-
-var smtpTransport = nodemailer.createTransport(smtpTransport({
-    host : "smtp.gmail.com",
-    secureConnection : true,
-    port: 465,
-    auth : {
-        user : "choise154@gmail.com",
-        pass : "dowklee741"
-    }
-}));
 
 app.set('views', './views');
 app.set('view engine', 'jade');
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: false }))
-
-var viewUrl = 'http://www.hs.ac.kr/kor/community/';
-
-var seq = 0;
-var rule1 = new cron.RecurrenceRule();
-rule1.second = 30;
-cron.scheduleJob(rule1, function(){
+var postInfo = {
+  "hacksa": {
+              id: 0,
+              url: haksaUrl,
+              tableName: "board_hacksa",
+              emailHtml: `<h1> hi, test </h2>`
+            },
+  "scholarship": {
+                  id: 0,
+                  url: haksaUrl,
+                  tableName: "board_hacksa",
+                  emailHtml: `<h1> hi, test </h2>`
+                },
+}
+var hacksaPostsRule = new cron.RecurrenceRule();
+hacksaPostsRule.second = 30;
+cron.scheduleJob(hacksaPostsRule, function(){
     console.log(new Date(), '30초');
-    hacksaPosts.splice(0,hacksaPosts.length);
-    request(urlArr[0], function (err, res, html) {
-      if (!err) {
-        var $ = cheerio.load(html);
-        $("td > a").each(function (i) {
-         var data = $(this)
-         var title = data.text();
-         var link = data.attr("href");
-         var post = [" ", title, "-1", link, " "]
-         hacksaPosts.push(post);
-         return false;
-        })
-          $("tr").children('td:first-child').each(function(){
-            var data = $(this)
-            var number = data.text()
-            if(number){
-              hacksaPosts[0][0]=number;
-              return false;
-            }
-          })
-          $("tr").children('td:nth-child(4)').each(function(){
-            var data = $(this)
-            var registration_date = data.text()
-            hacksaPosts[0][4] = registration_date;
-            return false;
-          })
-      }
-      var sql = "SELECT MAX(number) as number FROM board_hacksa"
-      conn.query(sql, function(err, results) {
-        if(err){
-          console.log(err);
-        } else {
-          console.log(hacksaPosts[0][0], results[0].number);
-          seq++;
-          if(hacksaPosts[0][0] != results[0].number) {
-            var sql = "INSERT INTO board_hacksa(number, title, style, link, registration_date) VALUES ?"
-            conn.query(sql, [hacksaPosts], function(err, data) {
-              if(err){
-                console.log(err);
-              } else {
-                console.log(new Date(), "hacksaPost Update!!");
-                var mailOptions={
-                      from : "LeeDongChel <choise154@gmail.com>",
-                      to : "choise154@gmail.com",
-                      subject : "[치.그.봐] 학사 게시판이 업데이트 되었습니다.",
-                      text : "Your Text",
-                      html : `<h2>
-                        <a href="${viewUrl+hacksaPosts[0][3]}">
-                          ${hacksaPosts[0][1]}</a>
-                        </h2>`
-                  }
-                  console.log(mailOptions);
-                  smtpTransport.sendMail(mailOptions, function(error, response){
-                      if(error){
-                          console.log(error);
-                      }else{
-                          console.log(response.response.toString());
-                          console.log("Message sent: " + response.message);
-                      }
-                });
-              }
-            })
-          }
-        }
-      })
-    });
-});
-var rule2 = new cron.RecurrenceRule();
-rule2.second = 35;
-cron.scheduleJob(rule2, function(){
-  console.log(new Date(), '30초');
-  request(urlArr[1], function (err, res, html) {
-    hacksaPosts.splice(0,hacksaPosts.length);
-    if (!err) {
-      var $ = cheerio.load(html);
-      $("td > a").each(function (i) {
-       var data = $(this)
-       var title = data.text();
+    require('./module/posts/postRefresh')(postInfo.hacksa);
 
-       var link = data.attr("href");
-       var post = [" ", title, "-1", link, " "]
-       hacksaPosts.push(post);
-       return false;
-      })
-        $("tr").children('td:first-child').each(function(){
-          var data = $(this)
-          var number = data.text()
-          if(number){
-            hacksaPosts[0][0]=number;
-            return false;
-          }
-        })
-        $("tr").children('td:nth-child(4)').each(function(){
-          var data = $(this)
-          var registration_date = data.text()
-          hacksaPosts[0][4] = registration_date;
-          return false;
-        })
-    }
-    var sql = "SELECT MAX(number) as number FROM board_scholarship"
-    conn.query(sql, function(err, results) {
-      if(err){
-        console.log(err);
-      } else {
-        console.log(hacksaPosts[0][0], results[0].number);
-        if(hacksaPosts[0][0] != results[0].number) {
-          var sql = "INSERT INTO board_scholarship(number, title, style, link, registration_date) VALUES ?"
-          conn.query(sql, [hacksaPosts], function(err, data) {
-            if(err){
-              console.log(err);
-            } else {
-              console.log(new Date(), "scholarship Update!!");
-              var mailOptions={
-                    from : "LeeDongChel <choise154@gmail.com>",
-                    to : "choise154@gmail.com",
-                    subject : "[치.그.봐] 장학/사회 게시판이 업데이트 되었습니다.",
-                    text : "Your Text",
-                    html : `<h2>
-                      <a href="${viewUrl+hacksaPosts[0][3]}">
-                        ${hacksaPosts[0][1]}</a>
-                      </h2>`
-                }
-                console.log(mailOptions);
-                smtpTransport.sendMail(mailOptions, function(error, response){
-                    if(error){
-                        console.log(error);
-                    }else{
-                        console.log(response.response.toString());
-                        console.log("Message sent: " + response.message);
-                    }
-              });
-            }
-          })
-        }
-      }
-    })
-  });
 });
-app.get('/notice/hacksa', function(req, res) {
-  var sql = "SELECT * FROM board_hacksa ORDER BY number DESC"
-  conn.query(sql, function(err, results) {
-    if(err){
-      console.log(err);
-    } else {
-      res.render('index', {posts:results})
-    }
-  })
+var scholarshipPostsRule = new cron.RecurrenceRule();
+scholarshipPostsRule.second = 40;
+cron.scheduleJob(scholarshipPostsRule, function(){
+    console.log(new Date(), '40초');
+    require('./module/posts/postRefresh')(postInfo.scholarship);
 });
 
-app.get('/notice/scholarship', function(req, res) {
-  var sql = "SELECT * FROM board_scholarship ORDER BY number DESC"
-  conn.query(sql, function(err, results) {
-    if(err){
-      console.log(err);
-    } else {
-      res.render('index', {posts:results})
-    }
-  })
-});
-
-app.get('/notice/recruit', function(req, res) {
-  var sql = "SELECT * FROM board_recruit ORDER BY number DESC"
-  conn.query(sql, function(err, results) {
-    if(err){
-      console.log(err);
-    } else {
-      res.render('index', {posts:results})
-    }
-  })
-});
+var notice = require('./module/route/notice')();
+app.use('/notice', notice);
 
 app.listen(4003, function() {
   console.log('Connected 4003 port!!!');
