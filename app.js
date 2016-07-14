@@ -7,29 +7,27 @@ var conn = require('./config/db')();
 var smtpTransport = require('./module/email/smtpMethod')();
 var app = express();
 
-var haksaUrl = "http://www.hs.ac.kr/kor/community/haksa_list.php" // 1
-var scholarshipUrl = "http://www.hs.ac.kr/kor/community/scholarship_list.php" //2
-var recruitUrl = "http://www.hs.ac.kr/kor/community/recruit_list.php" // 3
 var postInfo = {
   "hacksa": {
               id: 0,
-              url: haksaUrl,
+              url: 'http://www.hs.ac.kr/kor/community/haksa_list.php',
               tableName: "board_hacksa"
             },
   "scholarship": {
                   id: 1,
-                  url: scholarshipUrl,
+                  url: 'http://www.hs.ac.kr/kor/community/scholarship_list.php',
                   tableName: "board_scholarship"
                 },
   "recruit": {
                 id: 2,
-                url: recruitUrl,
+                url: 'http://www.hs.ac.kr/kor/community/recruit_list.php',
                 tableName: "board_recruit"
               },
 }
 var resultHacksaPosts = require('./crawler/hanshinUnivCrawling')(postInfo.hacksa);
 var resultScholarship = require('./crawler/hanshinUnivCrawling')(postInfo.scholarship);
 var resultRecruitship = require('./crawler/hanshinUnivCrawling')(postInfo.recruit);
+
 app.set('views', './views');
 app.set('view engine', 'jade');
 app.use(express.static('public'));
@@ -42,19 +40,19 @@ cron.scheduleJob(hacksaPostsRule, function(){
     require('./module/posts/postRefresh')(postInfo.hacksa);
 
 });
-var scholarshipPostsRule = new cron.RecurrenceRule();
-scholarshipPostsRule.second = 40;
-cron.scheduleJob(scholarshipPostsRule, function(){
-    console.log(new Date(), '40초');
-    require('./module/posts/postRefresh')(postInfo.scholarship);
-});
-
-var recruitPostsRule = new cron.RecurrenceRule();
-scholarshipPostsRule.second = 50;
-cron.scheduleJob(recruitPostsRule, function(){
-    console.log(new Date(), '50초');
-    require('./module/posts/postRefresh')(postInfo.recruit);
-});
+// var scholarshipPostsRule = new cron.RecurrenceRule();
+// scholarshipPostsRule.second = 40;
+// cron.scheduleJob(scholarshipPostsRule, function(){
+//     console.log(new Date(), '40초');
+//     require('./module/posts/postRefresh')(postInfo.scholarship);
+// });
+//
+// var recruitPostsRule = new cron.RecurrenceRule();
+// scholarshipPostsRule.second = 50;
+// cron.scheduleJob(recruitPostsRule, function(){
+//     console.log(new Date(), '50초');
+//     require('./module/posts/postRefresh')(postInfo.recruit);
+// });
 
 var notice = require('./module/route/notice')();
 app.use('/notice', notice);

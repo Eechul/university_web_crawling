@@ -56,10 +56,19 @@ module.exports = function(postInfo) {
                     to : "choise154@gmail.com",
                     subject : "[치.그.봐] 게시판이 업데이트 되었습니다.",
                     // text : "Your Text",
-                    html : `<h2>
-                      <a href="${postInfo.url}?${tmpPost[0][3]}">
-                        ${tmpPost[0][1]}</a>
-                      </h2>`
+                    html : `<div>
+                              <center> [치지말고.그냥.봐 - 한신대 ver] </center>
+                            </div>
+                            <center>
+                              <h5>
+                              <a href="http://www.hs.ac.kr/kor/community/${tmpPost[0][3]}">
+                              ${tmpPost[0][1]}</a>
+                              </h5>
+                            </center>
+                            <div>
+                              <center> have a good day~ </center>
+                            </div>
+                      `
                 }
                 smtpTransport.sendMail(mailOptions, function(err, res){
                   if(err){
