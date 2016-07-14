@@ -2,9 +2,8 @@ module.exports = function() {
   var cheerio = require('cheerio');
   var request = require('request');
   var conn = require('../config/db')();
-  var haksaUrl = "http://www.hs.ac.kr/kor/community/haksa_list.php" // 1
-  var scholarshipUrl = "http://www.hs.ac.kr/kor/community/scholarship_list.php" //3
-  var recruitUrl = "http://www.hs.ac.kr/kor/community/recruit_list.php" // 3
+  
+  var recruitUrl = "http://www.hs.ac.kr/kor/community/recruit_list.php"
 
   var hacksaPosts = [];
   request(recruitUrl,

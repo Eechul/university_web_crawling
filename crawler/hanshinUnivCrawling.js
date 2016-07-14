@@ -1,13 +1,10 @@
-module.exports = function() {
+module.exports = function(postInfo) {
   var cheerio = require('cheerio');
   var request = require('request');
   var conn = require('../config/db')();
-  var haksaUrl = "http://www.hs.ac.kr/kor/community/haksa_list.php" // 1
-  var scholarshipUrl = "http://www.hs.ac.kr/kor/community/scholarship_list.php" //3
-  var recruitUrl = "http://www.hs.ac.kr/kor/community/recruit_list.php" // 3
 
-  var hacksaPosts = [];
-  request(haksaUrl,
+  var posts = [];
+  request(postInfo.url,
     function (err, res, html) {
       if (!err) {
           var $ = cheerio.load(html);
@@ -17,7 +14,7 @@ module.exports = function() {
            var title = data.text();
            var link = data.attr("href");
            var post = [" ", title, "-1", link, " "]
-           hacksaPosts.push(post);
+           posts.push(post);
           })
           var i = 0;
           var j = 0;
@@ -26,37 +23,38 @@ module.exports = function() {
               var data = $(this)
               var number = data.text()
               if(number){
-                hacksaPosts[i][0]=number;
+                posts[i][0]=number;
                 i++;
               }
             })
             $(this).children('td:nth-child(4)').each(function(){
               var data = $(this)
               var registration_date = data.text()
-              hacksaPosts[j][4] = registration_date;
+              posts[j][4] = registration_date;
               j++
             })
           })
         }
-        hacksaPosts.splice(0,1);
-        var sql = "DELETE FROM board_hacksa"
+        posts.splice(0,1);
+        var sql = "DELETE FROM "+postInfo.tableName;
         conn.query(sql, function(err, results) {
           if(err) {
             console.log(err);
             res.status(500).send('server error!!')
           } else {
-            console.log('delete success');
+            console.log(postInfo.tableName+' delete success');
           }
         })
-        var sql = "INSERT INTO board_hacksa(number, title, style, link, registration_date) VALUES ?"
-        conn.query(sql, [hacksaPosts], function(err, results) {
+        var sql = "INSERT INTO "+postInfo.tableName+"(number, title, style, link, registration_date) VALUES ?"
+        conn.query(sql, [posts], function(err, results) {
           if(err) {
             console.log(err);
+            res.status(500).send('server error!!')
           } else {
-            console.log('insert success');
-            hacksaCrawlingStatus = true
+            console.log(postInfo.tableName+' insert success');
           }
         })
     });
-    return hacksaPosts;
+
+  return ;
 }

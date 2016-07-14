@@ -24,15 +24,15 @@ module.exports = function() {
     })
   });
 
-  // route.get('/recruit', function(req, res) {
-  //   var sql = "SELECT * FROM board_recruit ORDER BY number DESC"
-  //   conn.query(sql, function(err, results) {
-  //     if(err){
-  //       console.log(err);
-  //     } else {
-  //       res.render('index', {posts:results})
-  //     }
-  //   })
-  // });
+  route.get('/recruit', function(req, res) {
+    var sql = "SELECT * FROM board_recruit ORDER BY number DESC"
+    conn.query(sql, function(err, results) {
+      if(err){
+        console.log(err);
+      } else {
+        res.render('index', {posts:results})
+      }
+    })
+  });
   return route;
 }
