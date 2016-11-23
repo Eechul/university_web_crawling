@@ -1,8 +1,8 @@
 module.exports = function() {
   var cheerio = require('cheerio');
   var request = require('request');
-  var conn = require('../config/db')();
-  
+  var pool = require('../config/db')();
+
   var recruitUrl = "http://www.hs.ac.kr/kor/community/recruit_list.php"
 
   var hacksaPosts = [];
@@ -38,24 +38,31 @@ module.exports = function() {
           })
         }
         hacksaPosts.splice(0,1);
-        var sql = "DELETE FROM board_recruit"
-        conn.query(sql, function(err, results) {
-          if(err) {
-            console.log(err);
-            res.status(500).send('server error!!')
-          } else {
-            console.log('delete success');
-          }
-        })
-        var sql = "INSERT INTO board_recruit(number, title, style, link, registration_date) VALUES ?"
-        conn.query(sql, [hacksaPosts], function(err, results) {
-          if(err) {
-            console.log(err);
-          } else {
-            console.log('insert success');
-            hacksaCrawlingStatus = true
-          }
-        })
+
+        pool.getConnection(function(err, conn) {
+            var sql = "DELETE FROM board_recruit";
+            conn.query(sql, function(err, results) {
+              if(err) {
+                console.log(err);
+              } else {
+                console.log('delete success');
+              }
+            })
+            conn.release();
+        });
+
+        pool.getConnection(function(err, conn) {
+            var sql = "INSERT INTO board_recruit(number, title, style, link, registration_date) VALUES ?";
+            conn.query(sql, [hacksaPosts], function(err, results) {
+              if(err) {
+                console.log(err);
+              } else {
+                console.log('insert success');
+                hacksaCrawlingStatus = true;
+              }
+          });
+        });
+        conn.release();
     });
     return hacksaPosts;
-}
+};

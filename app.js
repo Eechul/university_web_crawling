@@ -12,21 +12,21 @@ var postInfo = {
               id: 0,
               url: 'http://www.hs.ac.kr/kor/community/haksa_list.php',
               tableName: "board_hacksa"
-            },
-  "scholarship": {
-                  id: 1,
-                  url: 'http://www.hs.ac.kr/kor/community/scholarship_list.php',
-                  tableName: "board_scholarship"
-                },
-  "recruit": {
-                id: 2,
-                url: 'http://www.hs.ac.kr/kor/community/recruit_list.php',
-                tableName: "board_recruit"
-              },
+            }
+  // "scholarship": {
+  //                 id: 1,
+  //                 url: 'http://www.hs.ac.kr/kor/community/scholarship_list.php',
+  //                 tableName: "board_scholarship"
+  //               },
+  // "recruit": {
+  //               id: 2,
+  //               url: 'http://www.hs.ac.kr/kor/community/recruit_list.php',
+  //               tableName: "board_recruit"
+  //             },
 }
 var resultHacksaPosts = require('./crawler/hanshinUnivCrawling')(postInfo.hacksa);
-var resultScholarship = require('./crawler/hanshinUnivCrawling')(postInfo.scholarship);
-var resultRecruitship = require('./crawler/hanshinUnivCrawling')(postInfo.recruit);
+// var resultScholarship = require('./crawler/hanshinUnivCrawling')(postInfo.scholarship);
+// var resultRecruitship = require('./crawler/hanshinUnivCrawling')(postInfo.recruit);
 
 app.set('views', './views');
 app.set('view engine', 'jade');
@@ -46,7 +46,7 @@ cron.scheduleJob(hacksaPostsRule, function(){
 //     console.log(new Date(), '40초');
 //     require('./module/posts/postRefresh')(postInfo.scholarship);
 // });
-//
+
 // var recruitPostsRule = new cron.RecurrenceRule();
 // scholarshipPostsRule.second = 50;
 // cron.scheduleJob(recruitPostsRule, function(){

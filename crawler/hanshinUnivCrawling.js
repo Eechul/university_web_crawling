@@ -1,7 +1,7 @@
 module.exports = function(postInfo) {
   var cheerio = require('cheerio');
   var request = require('request');
-  var conn = require('../config/db')();
+  var pool = require('../config/db')();
 
   var posts = [];
   request(postInfo.url,
@@ -31,30 +31,36 @@ module.exports = function(postInfo) {
               var data = $(this)
               var registration_date = data.text()
               posts[j][4] = registration_date;
-              j++
-            })
-          })
+              j++;
+            });
+        });
         }
         posts.splice(0,1);
-        var sql = "DELETE FROM "+postInfo.tableName;
-        conn.query(sql, function(err, results) {
-          if(err) {
-            console.log(err);
-            res.status(500).send('server error!!')
-          } else {
-            console.log(postInfo.tableName+' delete success');
-          }
-        })
-        var sql = "INSERT INTO "+postInfo.tableName+"(number, title, style, link, registration_date) VALUES ?"
-        conn.query(sql, [posts], function(err, results) {
-          if(err) {
-            console.log(err);
-            res.status(500).send('server error!!')
-          } else {
-            console.log(postInfo.tableName+' insert success');
-          }
-        })
+        var deleteSql = "DELETE FROM "+postInfo.tableName;
+        pool.getConnection(function(err, conn) {
+            conn.query(deleteSql, function(err, results) {
+              if(err) {
+                  console.log("11");
+                console.log(err);
+              } else {
+                console.log(postInfo.tableName+' delete success');
+              }
+          });
+            conn.release();
+        });
+
+        var insertSql = "INSERT INTO "+postInfo.tableName+"(number, title, style,link, registration_date) VALUES ?";
+        pool.getConnection(function(err, conn) {
+            conn.query(insertSql, [posts], function(err, results) {
+              if(err) {
+                console.log(err);
+              } else {
+                console.log(postInfo.tableName+' insert success');
+              }
+          });
+            conn.release();
+        });
     });
 
   return ;
-}
+};

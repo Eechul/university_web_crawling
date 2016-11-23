@@ -1,11 +1,11 @@
 module.exports = function() {
   var mysql = require('mysql');
-  var conn = mysql.createConnection({
+  var pool = mysql.createPool({
+      connectionLimit : 100,
      host     : 'localhost',
      user     : 'root',
      password : 'dongdb',
      database : 'mysql'
   });
-  conn.connect();
-  return conn;
+  return pool;
 }
