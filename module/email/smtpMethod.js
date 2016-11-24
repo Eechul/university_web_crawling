@@ -3,15 +3,15 @@ module.exports = function() {
   var nodemailer = require('nodemailer');
   var smtpTransport = require("nodemailer-smtp-transport")
 
-  var smtpTransport = nodemailer.createTransport(smtpTransport({
+  var Transport = nodemailer.createTransport(smtpTransport({
       host : "smtp.gmail.com",
       secureConnection : true,
       port: 465,
       auth : {
-          user : "****@gmail.com",
-          pass : "****"
+          user : "choise154@gmail.com",
+          pass : "dowklee123@"
       }
   }));
 
-  return smtpTransport;
+  return Transport;
 }

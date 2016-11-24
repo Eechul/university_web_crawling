@@ -17,35 +17,34 @@ module.exports = function(postInfo) {
       var $ = cheerio.load(html);
       $("td > a").each(function (i) {
        var data = $(this)
-       var title = data.text();
-       var link = data.attr("href");
-       var post = [" ", title, "-1", link, " "]
+       var TITLE_NM = data.text();
+       var LINK_NM = data.attr("href");
+       var post = [" ", TITLE_NM, "-1", LINK_NM, " "]
        tmpPost.push(post);
        return false;
       })
         $("tr").children('td:first-child').each(function(){
           var data = $(this)
-          var number = data.text()
-          if(number){
-            tmpPost[0][0]=number;
+          var BOARD_NO = data.text()
+          if(BOARD_NO){
+            tmpPost[0][0]=BOARD_NO;
             return false;
           }
         })
         $("tr").children('td:nth-child(4)').each(function(){
           var data = $(this)
-          var registration_date = data.text()
-          tmpPost[0][4] = registration_date;
+          var REGISTRATION_DATE_DT = data.text()
+          tmpPost[0][4] = REGISTRATION_DATE_DT;
           return false;
         })
     }
-    var sql = "SELECT MAX(number) as number FROM "+postInfo.tableName;
+    var sql = "SELECT MAX(BOARD_NO) as BOARD_NO FROM "+postInfo.tableName;
     conn.query(sql, function(err, results) {
       if(err){
         console.log(err);
       } else {
-        console.log(tmpPost[0][0], results[0].number);
-        if(tmpPost[0][0] != results[0].number) {
-          var sql = "INSERT INTO "+postInfo.tableName+"(number, title, style, link, registration_date) VALUES ?"
+        if(tmpPost[0][0] != results[0].BOARD_NO) {
+          var sql = "INSERT INTO "+postInfo.tableName+"(BOARD_NO, TITLE_NM, STYLE_CT, LINK_NM, REGISTRATION_DATE_DT) VALUES ?"
           conn.query(sql, [tmpPost], function(err, data) {
             if(err){
               console.log(err);

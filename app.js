@@ -54,8 +54,13 @@ cron.scheduleJob(hacksaPostsRule, function(){
 //     require('./module/posts/postRefresh')(postInfo.recruit);
 // });
 
+app.get('/auth/login', function(req, res) {
+    res.render('login/login')
+})
+
 var notice = require('./module/route/notice')();
 app.use('/notice', notice);
+
 
 app.listen(4003, function() {
   console.log('Connected 4003 port!!!');

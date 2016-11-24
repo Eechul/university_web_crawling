@@ -3,7 +3,7 @@ module.exports = function() {
   var conn = require('../../config/db')();
 
   route.get('/hacksa', function(req, res) {
-    var sql = "SELECT * FROM board_hacksa ORDER BY number DESC"
+    var sql = "SELECT * FROM board_hacksa ORDER BY BOARD_NO DESC"
     conn.query(sql, function(err, results) {
       if(err){
         console.log(err);
@@ -14,7 +14,7 @@ module.exports = function() {
   });
 
   route.get('/scholarship', function(req, res) {
-    var sql = "SELECT * FROM board_scholarship ORDER BY number DESC"
+    var sql = "SELECT * FROM board_scholarship ORDER BY BOARD_NO DESC"
     conn.query(sql, function(err, results) {
       if(err){
         console.log(err);
@@ -25,7 +25,7 @@ module.exports = function() {
   });
 
   route.get('/recruit', function(req, res) {
-    var sql = "SELECT * FROM board_recruit ORDER BY number DESC"
+    var sql = "SELECT * FROM board_recruit ORDER BY BOARD_NO DESC"
     conn.query(sql, function(err, results) {
       if(err){
         console.log(err);

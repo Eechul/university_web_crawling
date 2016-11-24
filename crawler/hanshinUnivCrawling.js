@@ -9,11 +9,12 @@ module.exports = function(postInfo) {
       if (!err) {
           var $ = cheerio.load(html);
           $("td > a").each(function (i) {
+              //BOARD_NO, TITLE_NM, STYLE_CT, LINK_NM, REGISTRATION_DATE_DT
            var data = $(this)
            //post.number=data.prev().html();
-           var title = data.text();
-           var link = data.attr("href");
-           var post = [" ", title, "-1", link, " "]
+           var TITLE_NM = data.text();
+           var LINK_NM = data.attr("href");
+           var post = [" ", TITLE_NM, "-1", LINK_NM, " "]
            posts.push(post);
           })
           var i = 0;
@@ -21,16 +22,16 @@ module.exports = function(postInfo) {
           $("tr").each(function () {
             $(this).children('td:first-child').each(function(){
               var data = $(this)
-              var number = data.text()
-              if(number){
-                posts[i][0]=number;
+              var BOARD_NO = data.text()
+              if(BOARD_NO){
+                posts[i][0]=BOARD_NO;
                 i++;
               }
             })
             $(this).children('td:nth-child(4)').each(function(){
               var data = $(this)
-              var registration_date = data.text()
-              posts[j][4] = registration_date;
+              var REGISTRATION_DATE_DT = data.text()
+              posts[j][4] = REGISTRATION_DATE_DT;
               j++;
             });
         });
@@ -49,7 +50,8 @@ module.exports = function(postInfo) {
             conn.release();
         });
 
-        var insertSql = "INSERT INTO "+postInfo.tableName+"(number, title, style,link, registration_date) VALUES ?";
+        var insertSql = "INSERT INTO "+postInfo.tableName+"(BOARD_NO, TITLE_NM, STYLE_CT, LINK_NM, REGISTRATION_DATE_DT) VALUES ?";
+        //BOARD_NO, TITLE_NM, STYLE_CT, LINK_NM, REGISTRATION_DATE_DT
         pool.getConnection(function(err, conn) {
             conn.query(insertSql, [posts], function(err, results) {
               if(err) {

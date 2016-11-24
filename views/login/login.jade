@@ -1,0 +1,27 @@
+doctype html
+html
+    head
+        title login
+        meta(charset='utf-8')
+        link(href='/css/login-style.css', rel='stylesheet', type='text/css')
+        meta(name='viewport', content='width=device-width, initial-scale=1')
+        script(type='application/x-javascript').
+            addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); }
+        // webfonts
+        link(href='http://fonts.googleapis.com/css?family=Open+Sans:600italic,400,300,600,700', rel='stylesheet', type='text/css')
+        // //webfonts
+    body
+        .main
+            .login-form
+                h1 Member Login
+                .head
+                    img(src='/images/user.png', alt='')
+                form
+                    input.text(type='text', value='Email', onfocus="this.value = '';", onblur="if (this.value == '') {this.value = 'Email';}")
+                    input(type='password', value='Password', onfocus="this.value = '';", onblur="if (this.value == '') {this.value = 'Password';}")
+                    .submit
+                        input(type='submit', onclick='myFunction()', value='LOGIN')
+                    .register
+                        input(type='button', onclick='myFunction()', value='REGISTER')
+                    p
+                        a(href='#') Forgot Password ?
