@@ -3,22 +3,36 @@ html
   head
     title 검색말고 그냥 봐 한신대 ver.
     meta(name='viewport', content='width-device-width, initial-scale=1.0')
-    link(rel='stylesheet', href='/bootstrap/css/bootstrap.css')
+    link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css')
+    script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js')
+    script(src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js')
   body
-    div
-        span 한신대 게시판 알리미
-        div.navbar-collapse.collapse
-            ul.nav.navbar-nav.pull-right
-                li
-                    a.btn.btn-rounded(href='/auth/login') SIGN IN / SIGN UP
-                li
-                    a.btn.btn-rounded Setting
+    nav.navbar.navbar-default
+        .container-fluid
+            .navbar-header
+                button.navbar-toggle(type='button' data-toggle='collapse' data-target='#myNavbar')
+                    span.icon-bar   
+                    span.icon-bar    
+                    span.icon-bar    
+                a.navbar-brand(href='#') 게시판 알리미 Beta
+            #myNavbar.collapse.navbar-collapse
+                ul.nav.navbar-nav.navbar-right
+                    li
+                        a(href='/auth/login') 
+                            span.glyphicon.glyphicon-user
+                            |   Login
+                    li
+                        a(href='/auth/register')
+                            span.glyphicon.glyphicon-log-in
+                            |   Sign Up
+                    //li
+                    //    a.btn.btn-rounded Setting
     div.btn-group.btn-group-justified
-      a.btn.btn-primary(href='/notice/hacksa') 학사공지
-      a.btn.btn-success(href='/notice/scholarship') 장학/사회봉사
-      a.btn.btn-info(href='/notice/recruit') 취업공지
+        a.btn.btn-primary(href='/notice/hacksa') 학사공지
+        a.btn.btn-success(href='/notice/scholarship') 장학/사회봉사
+        a.btn.btn-info(href='/notice/recruit') 취업공지
 
-
+    hr
     .table-responsive
       table.table
         thead

@@ -24,7 +24,7 @@ var postInfo = {
   //               tableName: "board_recruit"
   //             },
 }
-var resultHacksaPosts = require('./crawler/hanshinUnivCrawling')(postInfo.hacksa);
+// var resultHacksaPosts = require('./crawler/hanshinUnivCrawling')(postInfo.hacksa);
 // var resultScholarship = require('./crawler/hanshinUnivCrawling')(postInfo.scholarship);
 // var resultRecruitship = require('./crawler/hanshinUnivCrawling')(postInfo.recruit);
 
@@ -33,13 +33,13 @@ app.set('view engine', 'jade');
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: false }));
 
-var hacksaPostsRule = new cron.RecurrenceRule();
-hacksaPostsRule.second = 30;
-cron.scheduleJob(hacksaPostsRule, function(){
-    console.log(new Date(), '30초');
-    require('./module/posts/postRefresh')(postInfo.hacksa);
-
-});
+// var hacksaPostsRule = new cron.RecurrenceRule();
+// hacksaPostsRule.second = 30;
+// cron.scheduleJob(hacksaPostsRule, function(){
+//     console.log(new Date(), '30초');
+//     require('./module/posts/postRefresh')(postInfo.hacksa);
+//
+// });
 // var scholarshipPostsRule = new cron.RecurrenceRule();
 // scholarshipPostsRule.second = 40;
 // cron.scheduleJob(scholarshipPostsRule, function(){
