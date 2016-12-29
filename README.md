@@ -9,4 +9,4 @@
     - mysql (pool connetion)
 
 ## 프로젝트 파일 구조
-![파일구조]('./_projectImages/fileStructure.jpg')
+![파일구조](./_projectImages/fileStructure.jpg)
