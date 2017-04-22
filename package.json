@@ -13,7 +13,7 @@
     "cheerio": "^0.20.0",
     "cookie-parser": "^1.4.3",
     "express": "^4.14.0",
-    "express-mysql-session": "^1.1.1",
+    "express-mysql-session": "^1.2.0",
     "express-session": "^1.13.0",
     "jade": "^1.11.0",
     "md5": "^2.1.0",
@@ -29,10 +29,12 @@
     "passport-kakao": "0.0.3",
     "passport-local": "^1.0.0",
     "pbkdf2-password": "^1.1.0",
+    "promise": "^7.1.1",
     "request": "^2.72.0",
     "sequelize": "^3.27.0",
     "session-file-store": "^0.2.0",
-    "sha256": "^0.2.0"
+    "sha256": "^0.2.0",
+    "unirest": "^0.5.1"
   },
   "description": ""
 }

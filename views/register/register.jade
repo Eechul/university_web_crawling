@@ -13,13 +13,12 @@ html
     body
         .main
             .login-form
-                h1 Member Login
+                h1 Member Register
                 .head
                     img(src='/images/user.png', alt='')
-                form(action='/auth/login', method='POST')
-                    input.text(type='text', value='Email', onfocus="this.value = '';", onblur="if (this.value == '') {this.value = 'Email';}")
-                    input(type='password', value='Password', onfocus="this.value = '';", onblur="if (this.value == '') {this.value = 'Password';}")
+                form(action='/auth/register', method='POST')
+                    input.text(type='text', value='username', onfocus="this.value = '';", onblur="if (this.value == '') {this.value = 'Email';}")
+                    input(type='password', value='password', onfocus="this.value = '';", onblur="if (this.value == '') {this.value = 'Password';}")
+                    input(type='text', value='nickname', onfocus="this.value = '';", onblur="if (this.value == '') {this.value = 'Nickname';}")
                     .submit
-                        input(type='submit', value='Sign Up')
-                    p
-                        a(href='#') Forgot Password ?   
+                        input(type='submit', value='Register')

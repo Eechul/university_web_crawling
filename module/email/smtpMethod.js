@@ -1,4 +1,5 @@
-
+var emailAccountConfig = require('./gmailAccount')
+console.log(emailAccountConfig);
 module.exports = function() {
   var nodemailer = require('nodemailer');
   var smtpTransport = require("nodemailer-smtp-transport")
@@ -8,8 +9,8 @@ module.exports = function() {
       secureConnection : true,
       port: 465,
       auth : {
-          user : "choise154@gmail.com",
-          pass : "dowklee123@"
+          user : emailAccountConfig.email,
+          pass : emailAccountConfig.password
       }
   }));
 
